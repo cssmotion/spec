@@ -1,0 +1,124 @@
+{
+  "$schema": "https://cssmotion.dev/schema/1.0.0/manifest.json",
+  "specVersion": "1.0.0",
+
+  "identity": {
+    "id": "reveal-on-scroll",
+    "name": "Reveal on Scroll",
+    "description": "An element that fades and slides in as it enters the viewport, driven entirely by CSS scroll-driven animations with zero JavaScript. The animation progress is linked to the element's position in the scroll container.",
+    "tags": ["scroll", "reveal", "fade", "slide", "entrance"],
+    "category": "transition",
+    "generator": "CSSMotion Studio 1.0.0",
+    "createdAt": "2026-03-17T10:00:00Z",
+    "updatedAt": "2026-03-17T10:00:00Z",
+    "revision": 1
+  },
+
+  "attribution": {
+    "author": "Mushfau Saeed",
+    "organization": "CSSMotion",
+    "url": "https://cssmotion.dev",
+    "license": "MIT"
+  },
+
+  "playback": {
+    "duration": 0,
+    "iterationCount": 1,
+    "direction": "normal",
+    "fillMode": "both",
+    "autoplay": true,
+    "triggers": {
+      "hover": false,
+      "click": false,
+      "inView": false,
+      "scroll": true
+    }
+  },
+
+  "dimensions": {
+    "width": 600,
+    "height": 200,
+    "aspectRatio": "3/1",
+    "scalingBehavior": "fill"
+  },
+
+  "theming": {
+    "colorScheme": ["light", "dark"],
+    "tokens": [
+      {
+        "name": "--cssm-slide-distance",
+        "type": "length",
+        "defaultValue": "40px",
+        "description": "How far the element slides from its start position before coming to rest.",
+        "group": "shape",
+        "required": false
+      },
+      {
+        "name": "--cssm-slide-direction",
+        "type": "string",
+        "defaultValue": "translateY(var(--cssm-slide-distance))",
+        "description": "CSS transform value for the start position. Override to change slide direction (e.g. translateX for horizontal).",
+        "group": "shape",
+        "required": false
+      },
+      {
+        "name": "--cssm-fade-start-opacity",
+        "type": "number",
+        "defaultValue": "0",
+        "description": "Opacity at the start of the reveal. 0 = fully transparent, 1 = fully opaque.",
+        "group": "effects",
+        "required": false
+      }
+    ],
+    "variants": [
+      {
+        "id": "dark",
+        "name": "Dark Mode",
+        "file": "variants/dark.css",
+        "mediaQuery": "(prefers-color-scheme: dark)"
+      },
+      {
+        "id": "slide-left",
+        "name": "Slide from Left",
+        "file": "variants/slide-left.css",
+        "mediaQuery": null
+      },
+      {
+        "id": "slide-right",
+        "name": "Slide from Right",
+        "file": "variants/slide-right.css",
+        "mediaQuery": null
+      }
+    ]
+  },
+
+  "accessibility": {
+    "reducedMotionBehavior": "reduced",
+    "reducedMotionFile": "variants/reduced-motion.css",
+    "flashRisk": "none",
+    "seizureRisk": false,
+    "wcagLevel": "AA"
+  },
+
+  "technical": {
+    "cssFeatures": ["@keyframes", "@property", "animation-timeline", "scroll-driven"],
+    "scrollDriven": true,
+    "viewTransition": false,
+    "requiresJS": false,
+    "minBrowserSupport": {
+      "chrome": "115",
+      "firefox": "120",
+      "safari": "17",
+      "edge": "115"
+    }
+  },
+
+  "assets": {
+    "svg": "animation.svg",
+    "css": "animation.css",
+    "preview": {
+      "thumbnail": "preview/thumbnail.png",
+      "animated": "preview/preview.gif"
+    }
+  }
+}

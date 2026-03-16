@@ -1,0 +1,41 @@
+{
+  "name": "@cssm/spec",
+  "version": "1.0.0",
+  "description": "The official CSSMotion (.cssm) format specification and validator",
+  "type": "module",
+  "main": "tools/validate.js",
+  "bin": {
+    "cssm-validate": "./tools/validate.js"
+  },
+  "scripts": {
+    "validate:confetti": "node tools/validate.js examples/confetti-burst/manifest.json",
+    "validate:fade": "node tools/validate.js examples/simple-fade/manifest.json",
+    "validate:scroll": "node tools/validate.js examples/reveal-on-scroll/manifest.json",
+    "validate:all": "npm run validate:confetti && npm run validate:fade && npm run validate:scroll"
+  },
+  "files": [
+    "schema/",
+    "tools/",
+    "examples/",
+    "README.md"
+  ],
+  "keywords": [
+    "css",
+    "animation",
+    "cssm",
+    "cssmotion",
+    "web-animation",
+    "css-animation-format"
+  ],
+  "author": "Mushfau Saeed <mushfau@cssmotion.dev> (https://cssmotion.dev)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cssmotion/spec.git"
+  },
+  "homepage": "https://cssmotion.dev",
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}

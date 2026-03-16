@@ -1,0 +1,626 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cssmotion.dev/schema/1.0.0/manifest.json",
+  "title": "CSSMotion Manifest",
+  "description": "Schema for manifest.json inside a .cssm animation bundle. A .cssm file is a ZIP archive containing an SVG, CSS keyframes, and this manifest \u2014 enabling zero-runtime, browser-native CSS animations.",
+  "type": "object",
+  "required": [
+    "specVersion",
+    "identity",
+    "attribution",
+    "playback",
+    "accessibility",
+    "assets"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to the JSON Schema meta-schema. Optional but recommended for IDE IntelliSense."
+    },
+    "specVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver version of the .cssm specification this manifest targets. Players MUST ignore unknown fields from higher minor versions.",
+      "examples": [
+        "1.0.0"
+      ]
+    },
+    "identity": {
+      "type": "object",
+      "description": "Descriptive metadata identifying the animation.",
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+          "minLength": 3,
+          "maxLength": 64,
+          "description": "URL-safe slug uniquely identifying this animation within a creator's namespace. Used in marketplace URLs, CDN paths, and npm packages.",
+          "examples": [
+            "confetti-burst",
+            "loading-spinner",
+            "checkmark-success"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Human-readable display name for the animation.",
+          "examples": [
+            "Confetti Burst"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Short description of the animation, its purpose, and suggested use cases."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 32,
+            "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]?$"
+          },
+          "maxItems": 10,
+          "uniqueItems": true,
+          "description": "Freeform lowercase slug tags for search and discovery."
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "ui",
+            "feedback",
+            "loading",
+            "illustration",
+            "background",
+            "transition",
+            "icon",
+            "brand"
+          ],
+          "description": "Primary category for marketplace filtering. Choose the most specific match."
+        },
+        "generator": {
+          "type": "string",
+          "description": "Name and version of the tool that generated this file.",
+          "examples": [
+            "CSSMotion Studio 1.0.0",
+            "Hand-crafted"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 UTC timestamp of when this animation was first created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 UTC timestamp of the most recent update."
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Monotonically increasing integer. Increment on every published update.",
+          "default": 1
+        }
+      }
+    },
+    "attribution": {
+      "type": "object",
+      "description": "Authorship and licensing information.",
+      "required": [
+        "author",
+        "license"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "author": {
+          "type": "string",
+          "description": "Full name or handle of the primary creator.",
+          "examples": [
+            "Jane Doe"
+          ]
+        },
+        "organization": {
+          "type": "string",
+          "description": "Company or team name, if applicable."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Contact email for the author."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Author or organization website."
+        },
+        "license": {
+          "type": "string",
+          "description": "SPDX license identifier or 'Commercial'. See https://spdx.org/licenses/",
+          "examples": [
+            "CC-BY-4.0",
+            "CC0-1.0",
+            "MIT",
+            "Commercial"
+          ]
+        }
+      }
+    },
+    "playback": {
+      "type": "object",
+      "description": "Default playback behavior for the animation. All values correspond to CSS animation properties and should match what is declared in animation.css.",
+      "required": [
+        "duration"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "duration": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Duration of one full animation cycle in milliseconds. Must match animation-duration in animation.css.",
+          "examples": [
+            800,
+            1200,
+            2000
+          ]
+        },
+        "iterationCount": {
+          "description": "Number of times the animation repeats. Mirrors CSS animation-iteration-count.",
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "string",
+              "const": "infinite"
+            }
+          ],
+          "default": 1
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "normal",
+            "reverse",
+            "alternate",
+            "alternate-reverse"
+          ],
+          "description": "Mirrors CSS animation-direction.",
+          "default": "normal"
+        },
+        "fillMode": {
+          "type": "string",
+          "enum": [
+            "none",
+            "forwards",
+            "backwards",
+            "both"
+          ],
+          "description": "Mirrors CSS animation-fill-mode. 'forwards' is recommended for most one-shot animations.",
+          "default": "forwards"
+        },
+        "easing": {
+          "type": "string",
+          "description": "Default easing function. Mirrors CSS animation-timing-function. Accepts any valid CSS easing value including linear(), cubic-bezier(), etc.",
+          "examples": [
+            "ease-out",
+            "ease-in-out",
+            "linear",
+            "cubic-bezier(0.34, 1.56, 0.64, 1)"
+          ]
+        },
+        "autoplay": {
+          "type": "boolean",
+          "description": "Whether the animation should start playing automatically when loaded or triggered.",
+          "default": true
+        },
+        "triggers": {
+          "type": "object",
+          "description": "Declarative trigger configuration. The cssm-player web component uses these to set up event listeners and CSS class toggles automatically.",
+          "additionalProperties": false,
+          "properties": {
+            "hover": {
+              "type": "boolean",
+              "description": "Play animation when the host element is hovered.",
+              "default": false
+            },
+            "click": {
+              "type": "boolean",
+              "description": "Play animation when the host element is clicked.",
+              "default": false
+            },
+            "inView": {
+              "type": "boolean",
+              "description": "Play animation when the element enters the viewport (uses IntersectionObserver).",
+              "default": false
+            },
+            "scroll": {
+              "type": "boolean",
+              "description": "Link animation progress to scroll position (animation.css must use animation-timeline: scroll() or view()).",
+              "default": false
+            }
+          }
+        },
+        "intermission": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Milliseconds to pause between loop iterations.",
+          "default": 0
+        }
+      }
+    },
+    "dimensions": {
+      "type": "object",
+      "description": "Intrinsic dimensions and scaling behavior of the animation canvas.",
+      "additionalProperties": false,
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Intrinsic width of the animation in CSS pixels."
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Intrinsic height of the animation in CSS pixels."
+        },
+        "aspectRatio": {
+          "type": "string",
+          "pattern": "^[0-9]+\\/[0-9]+$",
+          "description": "CSS aspect-ratio value. Derived from width/height but declared explicitly for the player.",
+          "examples": [
+            "1/1",
+            "16/9",
+            "4/3"
+          ]
+        },
+        "scalingBehavior": {
+          "type": "string",
+          "enum": [
+            "contain",
+            "cover",
+            "fill",
+            "none"
+          ],
+          "description": "How the animation SVG scales within its container. Mirrors CSS object-fit behavior.",
+          "default": "contain"
+        }
+      }
+    },
+    "theming": {
+      "type": "object",
+      "description": "The theming API for this animation. Exposes CSS custom properties (--cssm-* tokens) that consumers can override to customize colors, sizes, and timing without editing the source.",
+      "additionalProperties": false,
+      "properties": {
+        "colorScheme": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "light",
+              "dark"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "Color schemes this animation is designed to support.",
+          "default": [
+            "light"
+          ]
+        },
+        "tokens": {
+          "type": "array",
+          "description": "Ordered list of CSS custom properties that are part of the animation's public theming API. All tokens MUST be declared with @property in animation.css and MUST be prefixed with '--cssm-'.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "type",
+              "defaultValue"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^--cssm-[a-z][a-z0-9-]*$",
+                "description": "The CSS custom property name. Must start with '--cssm-' to prevent collision with host page variables.",
+                "examples": [
+                  "--cssm-primary-color",
+                  "--cssm-duration-scale",
+                  "--cssm-particle-size"
+                ]
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "color",
+                  "length",
+                  "number",
+                  "angle",
+                  "percentage",
+                  "string",
+                  "integer"
+                ],
+                "description": "The @property syntax type. Directly maps to CSS @property { syntax: '<type>' }."
+              },
+              "defaultValue": {
+                "type": "string",
+                "description": "The initial-value declared in @property in animation.css. Used by the marketplace theming panel to pre-populate inputs."
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Human-readable description for the marketplace theming panel."
+              },
+              "group": {
+                "type": "string",
+                "enum": [
+                  "colors",
+                  "timing",
+                  "shape",
+                  "layout",
+                  "typography",
+                  "effects"
+                ],
+                "description": "Groups tokens in the theming panel UI."
+              },
+              "required": {
+                "type": "boolean",
+                "description": "If true, the animation may not render correctly without this token being overridden by the consumer.",
+                "default": false
+              }
+            }
+          }
+        },
+        "variants": {
+          "type": "array",
+          "description": "Alternate CSS files (inside the .cssm ZIP) that override token values for specific contexts. Applied as an additional <style> layer on top of animation.css.",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "file"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]?$",
+                "description": "Unique identifier for this variant. Used as the value of the 'variant' attribute on cssm-player."
+              },
+              "name": {
+                "type": "string",
+                "description": "Human-readable label for the marketplace theming panel."
+              },
+              "file": {
+                "type": "string",
+                "description": "Relative path to the variant CSS file within the .cssm ZIP.",
+                "examples": [
+                  "variants/dark.css",
+                  "variants/compact.css"
+                ]
+              },
+              "mediaQuery": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "If set, the player will apply this variant automatically when the given CSS media query matches (e.g. dark mode). If null, must be applied explicitly.",
+                "examples": [
+                  "(prefers-color-scheme: dark)",
+                  "(max-width: 480px)",
+                  null
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "description": "Motion accessibility declarations. The cssm-player web component enforces these automatically.",
+      "required": [
+        "reducedMotionBehavior"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "reducedMotionBehavior": {
+          "type": "string",
+          "enum": [
+            "static",
+            "reduced",
+            "none"
+          ],
+          "description": "How the player behaves when prefers-reduced-motion: reduce is detected. 'static': show first frame of SVG only, no animation. 'reduced': load reducedMotionFile CSS instead. 'none': animate regardless (only for essential animations \u2014 requires autoplayNote justification)."
+        },
+        "reducedMotionFile": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Path to an alternate CSS file inside the ZIP to use when reducedMotionBehavior is 'reduced'. This CSS should produce a simpler, slower, or non-moving version of the animation.",
+          "examples": [
+            "variants/reduced-motion.css",
+            null
+          ]
+        },
+        "flashRisk": {
+          "type": "string",
+          "enum": [
+            "none",
+            "low",
+            "high"
+          ],
+          "description": "Risk level of rapid flashing or strobing. 'high' means the animation may fail WCAG SC 2.3.1 (Three Flashes). The marketplace will display a warning for 'low' and block 'high' from Featured status.",
+          "default": "none"
+        },
+        "seizureRisk": {
+          "type": "boolean",
+          "description": "Set to true if the animation contains rapid color changes or flashing that could trigger photosensitive seizures. Will be blocked from autoplay in the marketplace player.",
+          "default": false
+        },
+        "autoplayNote": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Required when reducedMotionBehavior is 'none'. Must explain why this animation is essential and cannot be reduced."
+        },
+        "wcagLevel": {
+          "type": "string",
+          "enum": [
+            "A",
+            "AA",
+            "AAA",
+            "unverified"
+          ],
+          "description": "Self-reported WCAG conformance level. 'AA' or higher is required for Featured status on the marketplace.",
+          "default": "unverified"
+        }
+      }
+    },
+    "technical": {
+      "type": "object",
+      "description": "Browser compatibility and CSS feature declarations. Used by the player to check CSS.supports() before loading, enabling graceful degradation.",
+      "additionalProperties": false,
+      "properties": {
+        "cssFeatures": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "@keyframes",
+              "@property",
+              "animation-timeline",
+              "animation-composition",
+              "clip-path",
+              "filter",
+              "mask",
+              "transform-style-3d",
+              "view-transition",
+              "scroll-driven",
+              "css-nesting",
+              "container-queries",
+              "color-mix",
+              "linear-easing"
+            ]
+          },
+          "uniqueItems": true,
+          "description": "CSS features used in animation.css. The player uses this array to check CSS.supports() and gracefully degrade or warn."
+        },
+        "scrollDriven": {
+          "type": "boolean",
+          "description": "Shorthand flag: true if animation-timeline: scroll() or view() is used. Triggers a polyfill or warning for unsupported browsers.",
+          "default": false
+        },
+        "viewTransition": {
+          "type": "boolean",
+          "description": "Shorthand flag: true if the View Transitions API is used.",
+          "default": false
+        },
+        "requiresJS": {
+          "type": "boolean",
+          "description": "MUST be false for a valid .cssm animation. The animation.css must work with zero JavaScript. The player itself uses JS but the animation must not depend on it.",
+          "default": false,
+          "const": false
+        },
+        "minBrowserSupport": {
+          "type": "object",
+          "description": "Minimum browser versions required for the animation to function correctly.",
+          "additionalProperties": false,
+          "properties": {
+            "chrome": {
+              "type": "string",
+              "examples": [
+                "115"
+              ]
+            },
+            "firefox": {
+              "type": "string",
+              "examples": [
+                "120"
+              ]
+            },
+            "safari": {
+              "type": "string",
+              "examples": [
+                "17"
+              ]
+            },
+            "edge": {
+              "type": "string",
+              "examples": [
+                "115"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "description": "File paths within the .cssm ZIP for the animation's core assets.",
+      "required": [
+        "svg",
+        "css"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "svg": {
+          "type": "string",
+          "description": "Relative path to the SVG file containing the animation's shapes. Must not contain any animation code \u2014 structure only.",
+          "default": "animation.svg"
+        },
+        "css": {
+          "type": "string",
+          "description": "Relative path to the CSS file containing all @keyframes, @property declarations, and animation rules.",
+          "default": "animation.css"
+        },
+        "preview": {
+          "type": "object",
+          "description": "Preview assets for marketplace display.",
+          "additionalProperties": false,
+          "properties": {
+            "thumbnail": {
+              "type": "string",
+              "description": "Relative path to a static PNG thumbnail (recommended: 400\u00d7400px).",
+              "examples": [
+                "preview/thumbnail.png"
+              ]
+            },
+            "animated": {
+              "type": "string",
+              "description": "Relative path to an optional animated GIF preview for marketplace listing cards (recommended: \u22642s loop, \u2264200KB).",
+              "examples": [
+                "preview/preview.gif"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "custom": {
+      "type": "object",
+      "description": "Arbitrary extension data. For platform-specific fields, tooling metadata, or future spec extensions. Players MUST ignore unrecognized keys in this object.",
+      "examples": [
+        {
+          "figmaNodeId": "1234:5678"
+        },
+        {
+          "marketplace": {
+            "featured": true,
+            "collectionId": "ui-kit-2026"
+          }
+        }
+      ]
+    }
+  }
+}
