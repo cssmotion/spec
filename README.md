@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../cssm-brand/badge/cssm-badge-dark.svg" alt="CSSMotion" />
+</p>
+
 # CSSMotion (.cssm) Specification v1.0.0
 
 > **The open animation format for the modern web — powered entirely by CSS.**
